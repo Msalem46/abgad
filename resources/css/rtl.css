@@ -1,0 +1,144 @@
+/* RTL (Right-to-Left) Language Support */
+
+/* When document direction is RTL, adjust spacing */
+[dir="rtl"] .space-x-2 > * + * {
+    margin-right: 0.5rem;
+    margin-left: 0;
+}
+
+[dir="rtl"] .space-x-4 > * + * {
+    margin-right: 1rem;
+    margin-left: 0;
+}
+
+[dir="rtl"] .space-x-6 > * + * {
+    margin-right: 1.5rem;
+    margin-left: 0;
+}
+
+[dir="rtl"] .space-x-8 > * + * {
+    margin-right: 2rem;
+    margin-left: 0;
+}
+
+/* Text alignment for RTL */
+[dir="rtl"] .text-left {
+    text-align: right;
+}
+
+[dir="rtl"] .text-right {
+    text-align: left;
+}
+
+/* Padding adjustments for RTL */
+[dir="rtl"] .pl-3 {
+    padding-left: 0;
+    padding-right: 0.75rem;
+}
+
+[dir="rtl"] .pr-3 {
+    padding-right: 0;
+    padding-left: 0.75rem;
+}
+
+[dir="rtl"] .ml-2 {
+    margin-left: 0;
+    margin-right: 0.5rem;
+}
+
+[dir="rtl"] .mr-2 {
+    margin-right: 0;
+    margin-left: 0.5rem;
+}
+
+[dir="rtl"] .ml-3 {
+    margin-left: 0;
+    margin-right: 0.75rem;
+}
+
+[dir="rtl"] .mr-3 {
+    margin-right: 0;
+    margin-left: 0.75rem;
+}
+
+[dir="rtl"] .ml-4 {
+    margin-left: 0;
+    margin-right: 1rem;
+}
+
+[dir="rtl"] .mr-4 {
+    margin-right: 0;
+    margin-left: 1rem;
+}
+
+/* Float adjustments for RTL */
+[dir="rtl"] .float-left {
+    float: right;
+}
+
+[dir="rtl"] .float-right {
+    float: left;
+}
+
+/* Border radius adjustments for RTL */
+[dir="rtl"] .rounded-l-lg {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+[dir="rtl"] .rounded-r-lg {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+}
+
+/* Flex direction for RTL navigation */
+[dir="rtl"] .flex-row-reverse {
+    flex-direction: row-reverse;
+}
+
+/* Icon positioning for RTL */
+[dir="rtl"] .inline {
+    transform: scaleX(-1);
+}
+
+[dir="rtl"] .inline.no-flip {
+    transform: none;
+}
+
+/* Form input adjustments for RTL */
+[dir="rtl"] input[type="text"],
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="password"],
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+    text-align: right;
+}
+
+/* Dropdown positioning for RTL */
+[dir="rtl"] .absolute.right-0 {
+    right: auto;
+    left: 0;
+}
+
+[dir="rtl"] .absolute.left-0 {
+    left: auto;
+    right: 0;
+}
+
+/* Grid adjustments for better RTL layouts */
+[dir="rtl"] .grid {
+    direction: rtl;
+}
+
+/* Custom utility classes for RTL */
+.rtl-flip {
+    transform: scaleX(-1);
+}
+
+[dir="rtl"] .rtl-flip {
+    transform: scaleX(1);
+}
