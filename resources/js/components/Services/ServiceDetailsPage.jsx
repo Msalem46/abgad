@@ -33,7 +33,6 @@ import {
     CheckBadgeIcon as CheckBadgeSolidIcon
 } from '@heroicons/react/24/solid';
 import { useLanguage } from '../../contexts/LanguageContext';
-import PageLoader from '../Common/PageLoader';
 
 const ServiceDetailsPage = () => {
     const { id } = useParams();
