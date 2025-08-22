@@ -12,7 +12,13 @@ import Register from './components/Auth/Register';
 import PublicStoreRegistration from './components/Public/PublicStoreRegistration';
 import FreelancersPage from './components/Freelancers/FreelancersPage';
 import FreelancerRegistration from './components/Freelancers/FreelancerRegistration';
+import TourismProviderRegistration from './components/Tourism/TourismProviderRegistration';
+import TourismPage from './components/Tourism/TourismPage';
+import TourDetailsPage from './components/Tourism/TourDetailsPage';
 import ServicesPage from './components/Services/ServicesPage';
+import ServiceDetailsPage from './components/Services/ServiceDetailsPage';
+import StoreDetailsPage from './components/Stores/StoreDetailsPage';
+import FreelancerProfilePage from './components/Freelancers/FreelancerProfilePage';
 import StoresPage from './components/Stores/StoresPage';
 import StoreForm from './components/Stores/StoreForm';
 import StoreList from './components/Stores/StoreList';
@@ -42,6 +48,7 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/register-store" element={<PublicStoreRegistration />} />
                     <Route path="/register-freelancer" element={<FreelancerRegistration />} />
+                    <Route path="/register-tourism" element={<TourismProviderRegistration />} />
                     <Route path="/stores" element={
                         <PublicLayout>
                             <StoresPage />
@@ -55,6 +62,31 @@ function App() {
                     <Route path="/services" element={
                         <PublicLayout>
                             <ServicesPage />
+                        </PublicLayout>
+                    } />
+                    <Route path="/service/:id" element={
+                        <PublicLayout>
+                            <ServiceDetailsPage />
+                        </PublicLayout>
+                    } />
+                    <Route path="/tourism" element={
+                        <PublicLayout>
+                            <TourismPage />
+                        </PublicLayout>
+                    } />
+                    <Route path="/tour/:id" element={
+                        <PublicLayout>
+                            <TourDetailsPage />
+                        </PublicLayout>
+                    } />
+                    <Route path="/store/:id" element={
+                        <PublicLayout>
+                            <StoreDetailsPage />
+                        </PublicLayout>
+                    } />
+                    <Route path="/freelancer/:id" element={
+                        <PublicLayout>
+                            <FreelancerProfilePage />
                         </PublicLayout>
                     } />
 

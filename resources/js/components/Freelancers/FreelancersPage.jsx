@@ -9,14 +9,20 @@ import {
     ClockIcon,
     FunnelIcon,
     ListBulletIcon,
-    Squares2X2Icon
+    Squares2X2Icon,
+    CheckBadgeIcon,
+    EyeIcon,
+    HeartIcon,
+    CurrencyDollarIcon,
+    FireIcon,
+    BuildingLibraryIcon
 } from '@heroicons/react/24/outline';
-import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
+import { StarIcon as StarSolidIcon, HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 
 const FreelancersPage = () => {
-    const { t, direction } = useLanguage();
+    const { t, direction, language } = useLanguage();
     const [freelancers, setFreelancers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -28,12 +34,134 @@ const FreelancersPage = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [pagination, setPagination] = useState({});
 
+    // Mock data for demonstration
+    const mockFreelancers = [
+        {
+            freelancer_id: 1,
+            user: { first_name: 'Ahmed', last_name: 'Al-Mansouri' },
+            professional_title: 'Full Stack Developer',
+            bio: 'Experienced web developer specializing in React, Laravel, and Node.js. I create modern, responsive web applications with clean code and best practices.',
+            profile_image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&q=80',
+            rating: 4.8,
+            total_reviews: 127,
+            completed_projects: 45,
+            hourly_rate: 35,
+            location: { city: 'Amman' },
+            skills: ['React', 'Laravel', 'Node.js', 'MySQL', 'JavaScript'],
+            is_verified: true,
+            is_available: true,
+            experience_level: 'expert',
+            category: 'web_development'
+        },
+        {
+            freelancer_id: 2,
+            user: { first_name: 'Layla', last_name: 'Qasemi' },
+            professional_title: 'UI/UX Designer',
+            bio: 'Creative designer with 6+ years of experience in user interface and user experience design. I help businesses create beautiful and functional digital experiences.',
+            profile_image: 'https://images.unsplash.com/photo-1494790108755-2616b612b977?w=150&h=150&fit=crop&crop=face&q=80',
+            rating: 4.9,
+            total_reviews: 89,
+            completed_projects: 78,
+            hourly_rate: 40,
+            location: { city: 'Irbid' },
+            skills: ['Figma', 'Adobe XD', 'Sketch', 'Prototyping', 'User Research'],
+            is_verified: true,
+            is_available: true,
+            experience_level: 'expert',
+            category: 'graphic_design'
+        },
+        {
+            freelancer_id: 3,
+            user: { first_name: 'Omar', last_name: 'Hijazi' },
+            professional_title: 'Digital Marketing Specialist',
+            bio: 'Results-driven marketing professional helping businesses grow their online presence through strategic digital marketing campaigns and social media management.',
+            profile_image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&q=80',
+            rating: 4.6,
+            total_reviews: 156,
+            completed_projects: 92,
+            hourly_rate: 25,
+            location: { city: 'Aqaba' },
+            skills: ['SEO', 'Social Media', 'Google Ads', 'Content Marketing', 'Analytics'],
+            is_verified: false,
+            is_available: true,
+            experience_level: 'intermediate',
+            category: 'digital_marketing'
+        },
+        {
+            freelancer_id: 4,
+            user: { first_name: 'Fatima', last_name: 'Khalil' },
+            professional_title: 'Content Writer & Translator',
+            bio: 'Professional writer and translator fluent in Arabic and English. I create engaging content and provide accurate translation services for various industries.',
+            profile_image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face&q=80',
+            rating: 4.7,
+            total_reviews: 203,
+            completed_projects: 134,
+            hourly_rate: 20,
+            location: { city: 'Zarqa' },
+            skills: ['Content Writing', 'Translation', 'Copywriting', 'SEO Writing', 'Blogging'],
+            is_verified: true,
+            is_available: false,
+            experience_level: 'expert',
+            category: 'writing_translation'
+        },
+        {
+            freelancer_id: 5,
+            user: { first_name: 'Khaled', last_name: 'Nasser' },
+            professional_title: 'Mobile App Developer',
+            bio: 'Mobile app developer with expertise in iOS and Android development. I build high-quality, user-friendly mobile applications using the latest technologies.',
+            profile_image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face&q=80',
+            rating: 4.5,
+            total_reviews: 67,
+            completed_projects: 23,
+            hourly_rate: 45,
+            location: { city: 'Amman' },
+            skills: ['React Native', 'Flutter', 'iOS', 'Android', 'Firebase'],
+            is_verified: false,
+            is_available: true,
+            experience_level: 'intermediate',
+            category: 'mobile_development'
+        },
+        {
+            freelancer_id: 6,
+            user: { first_name: 'Nour', last_name: 'Abdallah' },
+            professional_title: 'Graphic Designer',
+            bio: 'Creative graphic designer specializing in brand identity, logo design, and digital artwork. I help businesses create memorable visual identities.',
+            profile_image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face&q=80',
+            rating: 4.8,
+            total_reviews: 112,
+            completed_projects: 85,
+            hourly_rate: 30,
+            location: { city: 'Salt' },
+            skills: ['Adobe Illustrator', 'Photoshop', 'Brand Design', 'Logo Design', 'Print Design'],
+            is_verified: true,
+            is_available: true,
+            experience_level: 'expert',
+            category: 'graphic_design'
+        }
+    ];
+
     const categories = [
         'web_development', 'mobile_development', 'graphic_design', 
         'writing_translation', 'digital_marketing', 'video_animation',
         'music_audio', 'programming_tech', 'business', 'photography', 
         'consulting', 'education', 'other'
     ];
+
+    const categoryIcons = {
+        web_development: BuildingLibraryIcon,
+        mobile_development: FireIcon,
+        graphic_design: FireIcon,
+        writing_translation: BuildingLibraryIcon,
+        digital_marketing: FireIcon,
+        video_animation: FireIcon,
+        music_audio: BuildingLibraryIcon,
+        programming_tech: BuildingLibraryIcon,
+        business: BriefcaseIcon,
+        photography: FireIcon,
+        consulting: BriefcaseIcon,
+        education: BuildingLibraryIcon,
+        other: BriefcaseIcon
+    };
 
     const experienceLevels = [
         { key: 'beginner', label: 'Beginner (0-2 years)' },
@@ -47,33 +175,35 @@ const FreelancersPage = () => {
     ];
 
     useEffect(() => {
-        fetchFreelancers();
-    }, [searchQuery, selectedCategory, selectedExperience, selectedLocation, minRating]);
+        // Simulate API call
+        setTimeout(() => {
+            setFreelancers(mockFreelancers);
+            setPagination({
+                current_page: 1,
+                last_page: 1,
+                total: mockFreelancers.length
+            });
+            setLoading(false);
+        }, 1000);
+    }, []);
 
     const fetchFreelancers = async (page = 1) => {
-        try {
-            setLoading(true);
-            const params = new URLSearchParams({
-                page,
-                per_page: 12
-            });
-
-            if (searchQuery) params.append('search', searchQuery);
-            if (selectedCategory) params.append('category', selectedCategory);
-            if (selectedExperience) params.append('experience_level', selectedExperience);
-            if (selectedLocation) params.append('location', selectedLocation);
-            if (minRating) params.append('min_rating', minRating);
-
-            const response = await api.get(`/freelancers?${params}`);
-            setFreelancers(response.data.data);
-            setPagination(response.data.pagination);
-        } catch (error) {
-            console.error('Error fetching freelancers:', error);
-            setFreelancers([]);
-        } finally {
-            setLoading(false);
-        }
+        // This would be the real API call
+        console.log('Fetching freelancers...');
     };
+
+    const filteredFreelancers = freelancers.filter(freelancer => {
+        const matchesSearch = freelancer.user.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            freelancer.user.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            freelancer.professional_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            freelancer.bio.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory = !selectedCategory || freelancer.category === selectedCategory;
+        const matchesExperience = !selectedExperience || freelancer.experience_level === selectedExperience;
+        const matchesLocation = !selectedLocation || freelancer.location?.city === selectedLocation;
+        const matchesRating = !minRating || freelancer.rating >= parseFloat(minRating);
+        
+        return matchesSearch && matchesCategory && matchesExperience && matchesLocation && matchesRating;
+    });
 
     const clearFilters = () => {
         setSearchQuery('');
@@ -100,336 +230,327 @@ const FreelancersPage = () => {
         return stars;
     };
 
-    const FreelancerCard = ({ freelancer }) => (
-        <div className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-200">
-            <div className="p-6">
-                <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                        {freelancer.profile_image ? (
-                            <img 
-                                className="h-16 w-16 rounded-full object-cover" 
-                                src={`/storage/${freelancer.profile_image}`}
-                                alt={freelancer.display_name}
-                            />
-                        ) : (
-                            <div className="h-16 w-16 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <UserIcon className="h-8 w-8 text-indigo-600" />
+    const getExperienceColor = (level) => {
+        const colors = {
+            beginner: 'text-green-600 bg-green-100',
+            intermediate: 'text-yellow-600 bg-yellow-100',
+            expert: 'text-purple-600 bg-purple-100'
+        };
+        return colors[level] || colors.beginner;
+    };
+
+    const FreelancerCard = ({ freelancer }) => {
+        const IconComponent = categoryIcons[freelancer.category] || BriefcaseIcon;
+        
+        return (
+            <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="relative">
+                    {/* Header with gradient background */}
+                    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-20 relative">
+                        <div className="absolute top-3 right-3">
+                            <div className="bg-white bg-opacity-90 rounded-full p-1.5">
+                                <IconComponent className="h-4 w-4 text-gray-600" />
+                            </div>
+                        </div>
+                        {freelancer.is_verified && (
+                            <div className="absolute top-3 left-3">
+                                <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                                    <CheckBadgeIcon className="h-4 w-4 mr-1" />
+                                    {language === 'ar' ? 'معتمد' : 'Verified'}
+                                </div>
                             </div>
                         )}
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold text-gray-900 truncate">
-                                {freelancer.user.first_name} {freelancer.user.last_name}
-                            </h3>
-                            {freelancer.is_verified && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    Verified
-                                </span>
-                            )}
-                        </div>
-                        
-                        <p className="text-sm font-medium text-indigo-600 mb-1">
-                            {freelancer.professional_title}
-                        </p>
-                        
-                        <div className="flex items-center space-x-4 text-sm text-gray-500 mb-2">
-                            <div className="flex items-center">
-                                {renderStars(freelancer.rating)}
-                                <span className="ml-1">({freelancer.total_reviews})</span>
-                            </div>
-                            
-                            {freelancer.location?.city && (
-                                <div className="flex items-center">
-                                    <MapPinIcon className="h-4 w-4 mr-1" />
-                                    <span>{freelancer.location.city}</span>
-                                </div>
-                            )}
-                        </div>
-
-                        <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                            {freelancer.bio}
-                        </p>
-
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center text-sm text-gray-500">
-                                <BriefcaseIcon className="h-4 w-4 mr-1" />
-                                <span>{freelancer.completed_projects} projects completed</span>
-                            </div>
-                            
-                            {freelancer.hourly_rate && (
-                                <div className="text-lg font-semibold text-gray-900">
-                                    {freelancer.hourly_rate} JOD/hr
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex flex-wrap gap-1 mt-3">
-                            {freelancer.skills?.slice(0, 3).map((skill, index) => (
-                                <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    {skill}
-                                </span>
-                            ))}
-                            {freelancer.skills?.length > 3 && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    +{freelancer.skills.length - 3} more
-                                </span>
-                            )}
-                        </div>
-
-                        <div className="mt-4">
-                            <Link 
-                                to={`/freelancers/${freelancer.freelancer_id}`}
-                                className="w-full inline-flex justify-center items-center px-4 py-2 border border-indigo-600 rounded-md text-sm font-medium text-indigo-600 hover:bg-indigo-50 transition-colors"
-                            >
-                                View Profile
-                            </Link>
+                    {/* Profile image overlapping */}
+                    <div className="absolute -bottom-8 left-6">
+                        <div className="relative">
+                            <img 
+                                className="h-16 w-16 rounded-full object-cover border-4 border-white shadow-lg" 
+                                src={freelancer.profile_image}
+                                alt={`${freelancer.user.first_name} ${freelancer.user.last_name}`}
+                            />
+                            <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white ${
+                                freelancer.is_available ? 'bg-green-400' : 'bg-gray-400'
+                            }`}></div>
                         </div>
                     </div>
                 </div>
+                
+                <div className="pt-10 pb-6 px-6">
+                    <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                {freelancer.user.first_name} {freelancer.user.last_name}
+                            </h3>
+                            <p className="text-indigo-600 font-medium text-sm mb-2">
+                                {freelancer.professional_title}
+                            </p>
+                        </div>
+                        <div className="ml-2">
+                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getExperienceColor(freelancer.experience_level)}`}>
+                                {language === 'ar' ? 
+                                    (freelancer.experience_level === 'beginner' ? 'مبتدئ' :
+                                     freelancer.experience_level === 'intermediate' ? 'متوسط' : 'خبير') :
+                                    freelancer.experience_level.charAt(0).toUpperCase() + freelancer.experience_level.slice(1)
+                                }
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div className="flex items-center mb-3">
+                        <div className="flex items-center mr-4">
+                            {renderStars(freelancer.rating)}
+                            <span className="ml-1 text-sm font-medium text-gray-900">
+                                {freelancer.rating}
+                            </span>
+                            <span className="ml-1 text-sm text-gray-500">
+                                ({freelancer.total_reviews})
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center text-sm text-gray-500 mb-3">
+                        <MapPinIcon className="h-4 w-4 mr-1" />
+                        <span className="mr-4">{freelancer.location?.city}</span>
+                        <BriefcaseIcon className="h-4 w-4 mr-1" />
+                        <span>{freelancer.completed_projects} {language === 'ar' ? 'مشاريع' : 'projects'}</span>
+                    </div>
+                    
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {freelancer.bio}
+                    </p>
+                    
+                    {/* Skills */}
+                    <div className="flex flex-wrap gap-1 mb-4">
+                        {freelancer.skills?.slice(0, 3).map((skill, index) => (
+                            <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                {skill}
+                            </span>
+                        ))}
+                        {freelancer.skills?.length > 3 && (
+                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                +{freelancer.skills.length - 3} {language === 'ar' ? 'المزيد' : 'more'}
+                            </span>
+                        )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                freelancer.is_available ? 'text-green-700 bg-green-100' : 'text-gray-700 bg-gray-100'
+                            }`}>
+                                {freelancer.is_available ? 
+                                    (language === 'ar' ? 'متاح' : 'Available') : 
+                                    (language === 'ar' ? 'مشغول' : 'Busy')
+                                }
+                            </span>
+                        </div>
+                        
+                        <div className="text-right">
+                            <div className="text-lg font-bold text-gray-900">
+                                {freelancer.hourly_rate} {language === 'ar' ? 'د.أ' : 'JOD'}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                                {language === 'ar' ? 'في الساعة' : 'per hour'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="flex space-x-2">
+                        <Link 
+                            to={`/freelancer/${freelancer.freelancer_id}`}
+                            className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium text-center"
+                        >
+                            {language === 'ar' ? 'عرض الملف الشخصي' : 'View Profile'}
+                        </Link>
+                        <button className="bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors">
+                            <HeartIcon className="h-4 w-4" />
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">{language === 'ar' ? 'جاري التحميل...' : 'Loading...'}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50" dir={direction}>
-            {/* Header */}
-            <div className="bg-white shadow-sm border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Hero Section */}
+            <div className="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 overflow-hidden">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
                     <div className="text-center">
-                        <h1 className="text-3xl font-bold text-gray-900">Find Talented Freelancers</h1>
-                        <p className="mt-2 text-lg text-gray-600">
-                            Discover skilled professionals ready to help with your projects
+                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                            {language === 'ar' ? 'اعثر على أفضل المستقلين' : 'Find Top Freelancers'}
+                        </h1>
+                        <p className="text-xl text-white opacity-90 mb-8 max-w-3xl mx-auto">
+                            {language === 'ar' ? 
+                                'اكتشف المحترفين المهرة الجاهزين لمساعدتك في مشاريعك وتحقيق أهدافك' :
+                                'Discover skilled professionals ready to help you achieve your goals and bring your projects to life'
+                            }
                         </p>
+                        <Link
+                            to="/register-freelancer"
+                            className="inline-flex items-center bg-white text-indigo-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
+                        >
+                            <UserIcon className="h-5 w-5 mr-2" />
+                            {language === 'ar' ? 'انضم كمستقل' : 'Become a Freelancer'}
+                        </Link>
                     </div>
                 </div>
+                
+                {/* Decorative shapes */}
+                <div className="absolute top-0 left-0 w-40 h-40 bg-white bg-opacity-10 rounded-full -translate-x-20 -translate-y-20"></div>
+                <div className="absolute bottom-0 right-0 w-60 h-60 bg-white bg-opacity-5 rounded-full translate-x-20 translate-y-20"></div>
             </div>
 
-            {/* Search and Filters */}
-            <div className="bg-white shadow-sm border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div className="flex flex-col lg:flex-row gap-4 mb-4">
-                        <div className="flex-1">
+            {/* Filters & Search */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
+                <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {language === 'ar' ? 'البحث' : 'Search Freelancers'}
+                            </label>
                             <div className="relative">
                                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                                 <input
                                     type="text"
-                                    placeholder="Search freelancers by name, skills, or expertise..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    placeholder={language === 'ar' ? 'ابحث عن المستقلين...' : 'Search freelancers...'}
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 />
                             </div>
                         </div>
                         
-                        <div className="flex items-center space-x-2">
-                            <button
-                                onClick={() => setViewMode('grid')}
-                                className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400'}`}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {language === 'ar' ? 'الفئة' : 'Category'}
+                            </label>
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                className="w-full py-3 px-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             >
-                                <Squares2X2Icon className="h-5 w-5" />
-                            </button>
-                            <button
-                                onClick={() => setViewMode('list')}
-                                className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400'}`}
+                                <option value="">{language === 'ar' ? 'جميع الفئات' : 'All Categories'}</option>
+                                {categories.map(category => (
+                                    <option key={category} value={category}>
+                                        {category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {language === 'ar' ? 'مستوى الخبرة' : 'Experience Level'}
+                            </label>
+                            <select
+                                value={selectedExperience}
+                                onChange={(e) => setSelectedExperience(e.target.value)}
+                                className="w-full py-3 px-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             >
-                                <ListBulletIcon className="h-5 w-5" />
-                            </button>
-                            <button
-                                onClick={() => setShowFilters(!showFilters)}
-                                className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                <option value="">{language === 'ar' ? 'جميع المستويات' : 'All Levels'}</option>
+                                {experienceLevels.map(level => (
+                                    <option key={level.key} value={level.key}>
+                                        {level.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {language === 'ar' ? 'الموقع' : 'Location'}
+                            </label>
+                            <select
+                                value={selectedLocation}
+                                onChange={(e) => setSelectedLocation(e.target.value)}
+                                className="w-full py-3 px-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             >
-                                <FunnelIcon className="h-4 w-4 mr-2" />
-                                Filters
-                            </button>
+                                <option value="">{language === 'ar' ? 'جميع المدن' : 'All Cities'}</option>
+                                {jordanianCities.map(city => (
+                                    <option key={city} value={city}>
+                                        {city}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
-
-                    {/* Filters Panel */}
-                    {showFilters && (
-                        <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Category
-                                    </label>
-                                    <select
-                                        value={selectedCategory}
-                                        onChange={(e) => setSelectedCategory(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                    >
-                                        <option value="">All Categories</option>
-                                        {categories.map(category => (
-                                            <option key={category} value={category}>
-                                                {category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Experience Level
-                                    </label>
-                                    <select
-                                        value={selectedExperience}
-                                        onChange={(e) => setSelectedExperience(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                    >
-                                        <option value="">All Levels</option>
-                                        {experienceLevels.map(level => (
-                                            <option key={level.key} value={level.key}>
-                                                {level.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Location
-                                    </label>
-                                    <select
-                                        value={selectedLocation}
-                                        onChange={(e) => setSelectedLocation(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                    >
-                                        <option value="">All Cities</option>
-                                        {jordanianCities.map(city => (
-                                            <option key={city} value={city}>
-                                                {city}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Minimum Rating
-                                    </label>
-                                    <select
-                                        value={minRating}
-                                        onChange={(e) => setMinRating(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                    >
-                                        <option value="">Any Rating</option>
-                                        <option value="4">4+ Stars</option>
-                                        <option value="4.5">4.5+ Stars</option>
-                                        <option value="4.8">4.8+ Stars</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end">
-                                <button
-                                    onClick={clearFilters}
-                                    className="px-4 py-2 text-indigo-600 bg-white border border-indigo-600 rounded-md hover:bg-indigo-50 transition-colors"
-                                >
-                                    Clear Filters
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <p className="text-gray-600">
-                            {pagination.total ? `${pagination.total} freelancers found` : 'Loading...'}
+                    
+                    <div className="mt-4 flex justify-between items-center">
+                        <p className="text-sm text-gray-600">
+                            {language === 'ar' ? 
+                                `تم العثور على ${filteredFreelancers.length} مستقل` :
+                                `Found ${filteredFreelancers.length} freelancers`
+                            }
                         </p>
+                        <button
+                            onClick={clearFilters}
+                            className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                        >
+                            {language === 'ar' ? 'إعادة تعيين الفلاتر' : 'Reset Filters'}
+                        </button>
                     </div>
                 </div>
 
                 {/* Freelancers Grid */}
-                {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[...Array(6)].map((_, index) => (
-                            <div key={index} className="animate-pulse">
-                                <div className="bg-white rounded-lg shadow-sm border p-6">
-                                    <div className="flex items-start space-x-4">
-                                        <div className="h-16 w-16 bg-gray-200 rounded-full"></div>
-                                        <div className="flex-1 space-y-2">
-                                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                                            <div className="h-3 bg-gray-200 rounded w-full"></div>
-                                            <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : freelancers.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {freelancers.map(freelancer => (
-                            <FreelancerCard key={freelancer.freelancer_id} freelancer={freelancer} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-12">
-                        <UserIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">
-                            No freelancers found
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    {filteredFreelancers.map(freelancer => (
+                        <FreelancerCard key={freelancer.freelancer_id} freelancer={freelancer} />
+                    ))}
+                </div>
+
+                {/* Empty State */}
+                {filteredFreelancers.length === 0 && (
+                    <div className="text-center py-16">
+                        <UserIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                            {language === 'ar' ? 'لا يوجد مستقلين' : 'No freelancers found'}
                         </h3>
-                        <p className="text-gray-600 mb-4">
-                            Try adjusting your search criteria or filters.
+                        <p className="text-gray-600 mb-6">
+                            {language === 'ar' ? 'جرب تعديل فلاتر البحث للعثور على مستقلين' : 'Try adjusting your search filters to find freelancers'}
                         </p>
                         <button
                             onClick={clearFilters}
-                            className="text-indigo-600 hover:text-indigo-500 font-medium"
+                            className="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition-colors"
                         >
-                            Clear all filters
+                            {language === 'ar' ? 'إعادة تعيين الفلاتر' : 'Reset Filters'}
                         </button>
                     </div>
                 )}
 
-                {/* Pagination */}
-                {pagination.last_page > 1 && (
-                    <div className="flex justify-center mt-12">
-                        <nav className="flex items-center space-x-1">
-                            {pagination.current_page > 1 && (
-                                <button
-                                    onClick={() => fetchFreelancers(pagination.current_page - 1)}
-                                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                                >
-                                    Previous
-                                </button>
-                            )}
-                            
-                            {[...Array(Math.min(pagination.last_page, 5))].map((_, index) => {
-                                const page = index + 1;
-                                const isCurrentPage = page === pagination.current_page;
-                                
-                                return (
-                                    <button
-                                        key={page}
-                                        onClick={() => fetchFreelancers(page)}
-                                        className={`px-3 py-2 text-sm font-medium rounded-md ${
-                                            isCurrentPage
-                                                ? 'bg-indigo-600 text-white'
-                                                : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-                                        }`}
-                                    >
-                                        {page}
-                                    </button>
-                                );
-                            })}
-                            
-                            {pagination.current_page < pagination.last_page && (
-                                <button
-                                    onClick={() => fetchFreelancers(pagination.current_page + 1)}
-                                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                                >
-                                    Next
-                                </button>
-                            )}
-                        </nav>
-                    </div>
-                )}
+                {/* Call to Action */}
+                <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-center text-white mb-12">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                        {language === 'ar' ? 'هل أنت مستقل؟' : 'Are you a freelancer?'}
+                    </h2>
+                    <p className="text-lg opacity-90 mb-6">
+                        {language === 'ar' ? 
+                            'انضم إلى منصتنا واعرض مهاراتك للآلاف من العملاء المحتملين' :
+                            'Join our platform and showcase your skills to thousands of potential clients'
+                        }
+                    </p>
+                    <Link
+                        to="/register-freelancer"
+                        className="inline-flex items-center bg-white text-indigo-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
+                    >
+                        <UserIcon className="h-5 w-5 mr-2" />
+                        {language === 'ar' ? 'انضم كمستقل' : 'Become a Freelancer'}
+                    </Link>
+                </div>
             </div>
         </div>
     );

@@ -453,7 +453,7 @@ const StoresPage = () => {
                 {/* Action Buttons */}
                 <div className="flex space-x-2">
                     <Link
-                        to={`/stores/${store.id}`}
+                        to={`/store/${store.id}`}
                         className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-center py-2 px-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
                     >
                         {language === 'ar' ? 'عرض التفاصيل' : 'View Details'}

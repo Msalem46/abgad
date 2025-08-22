@@ -11,12 +11,14 @@ const translations = {
       stores: 'Stores',
       freelancers: 'Freelancers',
       services: 'Services',
+      tourism: 'Tourism',
       categories: 'Categories',
       about: 'About',
       contact: 'Contact',
       signin: 'Sign In',
       listBusiness: 'List Your Business',
       becomeFreelancer: 'Become Freelancer',
+      becomeTourismProvider: 'Become Tourism Provider',
       dashboard: 'Dashboard',
       myStores: 'My Stores',
       analytics: 'Analytics',
@@ -345,6 +347,58 @@ const translations = {
       of: 'of'
     },
 
+    // Tourism
+    tourism: {
+      title: 'Tourism Services',
+      subtitle: 'Discover amazing tours, trips and tourism services in Jordan',
+      providers: 'Tourism Providers',
+      tours: 'Tours & Trips',
+      registerProvider: 'Register as Tourism Provider',
+      browseServices: 'Browse Tourism Services',
+      featuredTours: 'Featured Tours',
+      popularDestinations: 'Popular Destinations',
+      tourTypes: {
+        cultural: 'Cultural Tours',
+        adventure: 'Adventure Tours',
+        historical: 'Historical Sites',
+        nature: 'Nature & Wildlife',
+        religious: 'Religious Tours',
+        city: 'City Tours',
+        desert: 'Desert Tours',
+        diving: 'Diving & Snorkeling'
+      },
+      duration: 'Duration',
+      price: 'Price per person',
+      groupSize: 'Group size',
+      difficulty: 'Difficulty level',
+      includes: 'What\'s included',
+      bookNow: 'Book Now',
+      contact: 'Contact Provider',
+      viewDetails: 'View Details'
+    },
+
+    // Tourism Provider Registration
+    tourismRegistration: {
+      title: 'Become a Tourism Provider',
+      subtitle: 'Register your tourism business and showcase your services',
+      companyInfo: 'Company Information',
+      companyName: 'Company Name',
+      companyDescription: 'Company Description',
+      licenseNumber: 'Tourism License Number',
+      serviceTypes: 'Service Types',
+      operatingAreas: 'Operating Areas',
+      contactInfo: 'Contact Information',
+      representative: 'Company Representative',
+      certifications: 'Certifications',
+      portfolio: 'Portfolio Images',
+      experience: 'Years of Experience',
+      languages: 'Spoken Languages',
+      specialties: 'Specialties',
+      createAccount: 'Create Tourism Account',
+      loginRequired: 'Login Required',
+      loginRequiredMessage: 'You need to be logged in to register as a tourism provider.'
+    },
+
     // Footer
     footer: {
       description: 'Discover and connect with the best local businesses across Jordan. Your trusted directory for restaurants, cafes, shops, and services.',
@@ -365,12 +419,14 @@ const translations = {
       stores: 'المتاجر',
       freelancers: 'المستقلون',
       services: 'الخدمات',
+      tourism: 'سواح',
       categories: 'الفئات',
       about: 'حولنا',
       contact: 'اتصل بنا',
       signin: 'تسجيل الدخول',
       listBusiness: 'اضف متجرك',
       becomeFreelancer: 'كن مستقلاً',
+      becomeTourismProvider: 'كن مقدم خدمات سياحية',
       dashboard: 'لوحة التحكم',
       myStores: 'متاجري',
       analytics: 'التحليلات',
@@ -697,6 +753,58 @@ const translations = {
       cancel: 'إلغاء',
       step: 'الخطوة',
       of: 'من'
+    },
+
+    // Tourism
+    tourism: {
+      title: 'الخدمات السياحية',
+      subtitle: 'اكتشف رحلات وجولات وخدمات سياحية مذهلة في الأردن',
+      providers: 'مقدمو الخدمات السياحية',
+      tours: 'الجولات والرحلات',
+      registerProvider: 'التسجيل كمقدم خدمات سياحية',
+      browseServices: 'تصفح الخدمات السياحية',
+      featuredTours: 'الجولات المميزة',
+      popularDestinations: 'الوجهات الشائعة',
+      tourTypes: {
+        cultural: 'الجولات الثقافية',
+        adventure: 'جولات المغامرة',
+        historical: 'المواقع التاريخية',
+        nature: 'الطبيعة والحياة البرية',
+        religious: 'الجولات الدينية',
+        city: 'جولات المدينة',
+        desert: 'جولات الصحراء',
+        diving: 'الغوص والسباحة'
+      },
+      duration: 'المدة',
+      price: 'السعر للفرد',
+      groupSize: 'حجم المجموعة',
+      difficulty: 'مستوى الصعوبة',
+      includes: 'ما هو مشمول',
+      bookNow: 'احجز الآن',
+      contact: 'اتصل بمقدم الخدمة',
+      viewDetails: 'عرض التفاصيل'
+    },
+
+    // Tourism Provider Registration
+    tourismRegistration: {
+      title: 'كن مقدم خدمات سياحية',
+      subtitle: 'سجل شركتك السياحية واعرض خدماتك',
+      companyInfo: 'معلومات الشركة',
+      companyName: 'اسم الشركة',
+      companyDescription: 'وصف الشركة',
+      licenseNumber: 'رقم رخصة السياحة',
+      serviceTypes: 'أنواع الخدمات',
+      operatingAreas: 'مناطق التشغيل',
+      contactInfo: 'معلومات التواصل',
+      representative: 'ممثل الشركة',
+      certifications: 'الشهادات',
+      portfolio: 'صور الأعمال',
+      experience: 'سنوات الخبرة',
+      languages: 'اللغات المتحدث بها',
+      specialties: 'التخصصات',
+      createAccount: 'إنشاء حساب سياحي',
+      loginRequired: 'تسجيل الدخول مطلوب',
+      loginRequiredMessage: 'تحتاج إلى تسجيل الدخول أولاً لتتمكن من التسجيل كمقدم خدمات سياحية.'
     },
 
     // Footer

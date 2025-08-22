@@ -60,6 +60,13 @@ const PublicLayout = ({ children }) => {
                                 <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
                             </Link>
                             <Link 
+                                to="/tourism" 
+                                className="relative text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-all duration-300 group"
+                            >
+                                {t('nav.tourism')}
+                                <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 group-hover:w-full group-hover:left-0 transition-all duration-300"></span>
+                            </Link>
+                            <Link 
                                 to="/about" 
                                 className="relative text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-all duration-300 group"
                             >
@@ -82,6 +89,12 @@ const PublicLayout = ({ children }) => {
                                 className="text-indigo-600 border border-indigo-600 px-4 py-2 text-sm font-medium rounded-full hover:bg-indigo-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
                             >
                                 {t('nav.becomeFreelancer')}
+                            </Link>
+                            <Link
+                                to="/register-tourism"
+                                className="text-green-600 border border-green-600 px-4 py-2 text-sm font-medium rounded-full hover:bg-green-50 transition-all duration-300 transform hover:scale-105 hover:shadow-md"
+                            >
+                                {t('nav.becomeTourismProvider')}
                             </Link>
                             <Link
                                 to="/register-store"
@@ -136,6 +149,12 @@ const PublicLayout = ({ children }) => {
                                 {t('nav.services')}
                             </Link>
                             <Link 
+                                to="/tourism" 
+                                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors"
+                            >
+                                {t('nav.tourism')}
+                            </Link>
+                            <Link 
                                 to="/about" 
                                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors"
                             >
@@ -156,6 +175,12 @@ const PublicLayout = ({ children }) => {
                                     className="block px-3 py-2 text-base font-medium text-indigo-600 border border-indigo-600 hover:bg-indigo-50 rounded-full transition-colors mx-3 mt-2"
                                 >
                                     {t('nav.becomeFreelancer')}
+                                </Link>
+                                <Link
+                                    to="/register-tourism"
+                                    className="block px-3 py-2 text-base font-medium text-green-600 border border-green-600 hover:bg-green-50 rounded-full transition-colors mx-3 mt-2"
+                                >
+                                    {t('nav.becomeTourismProvider')}
                                 </Link>
                                 <Link
                                     to="/register-store"

@@ -51,11 +51,23 @@ class RoleSeeder extends Seeder
                 ]
             ],
             [
+                'role_name' => 'tourism_provider',
+                'description' => 'Tourism Service Provider',
+                'permissions' => [
+                    'tours' => ['create', 'read', 'update', 'delete'],
+                    'tourism_profile' => ['create', 'read', 'update'],
+                    'bookings' => ['read', 'update'],
+                    'portfolio' => ['create', 'read', 'update', 'delete'],
+                    'analytics' => ['read_own']
+                ]
+            ],
+            [
                 'role_name' => 'viewer',
                 'description' => 'Public Viewer',
                 'permissions' => [
                     'stores' => ['read'],
                     'services' => ['read'],
+                    'tours' => ['read'],
                     'menu' => ['read'],
                     'photos' => ['read']
                 ]

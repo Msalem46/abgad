@@ -1,89 +1,303 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-    MagnifyingGlassIcon, 
-    ClockIcon,
+    MagnifyingGlassIcon,
+    MapPinIcon,
     StarIcon,
-    TagIcon,
+    ClockIcon,
     CurrencyDollarIcon,
-    FunnelIcon,
-    Squares2X2Icon,
-    ListBulletIcon
+    CheckBadgeIcon,
+    EyeIcon,
+    HeartIcon,
+    FireIcon,
+    BuildingLibraryIcon,
+    BriefcaseIcon,
+    GlobeAltIcon,
+    UsersIcon,
+    TagIcon,
+    PlayIcon
 } from '@heroicons/react/24/outline';
-import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
+import { 
+    StarIcon as StarSolidIcon, 
+    HeartIcon as HeartSolidIcon,
+    CheckBadgeIcon as CheckBadgeSolidIcon 
+} from '@heroicons/react/24/solid';
 import { useLanguage } from '../../contexts/LanguageContext';
-import api from '../../services/api';
 
 const ServicesPage = () => {
-    const { t, direction } = useLanguage();
+    const { t, direction, language } = useLanguage();
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [serviceType, setServiceType] = useState('');
-    const [minPrice, setMinPrice] = useState('');
-    const [maxPrice, setMaxPrice] = useState('');
-    const [maxDeliveryDays, setMaxDeliveryDays] = useState('');
-    const [minRating, setMinRating] = useState('');
-    const [viewMode, setViewMode] = useState('grid');
-    const [showFilters, setShowFilters] = useState(false);
-    const [pagination, setPagination] = useState({});
+    const [selectedPriceRange, setSelectedPriceRange] = useState('');
+    const [selectedDeliveryTime, setSelectedDeliveryTime] = useState('');
+    const [selectedRating, setSelectedRating] = useState('');
 
-    const [categories, setCategories] = useState({});
+    // Mock data for demonstration
+    const mockServices = [
+        {
+            service_id: 1,
+            title: 'Professional Website Development',
+            description: 'I will create a modern, responsive website using React and Laravel. Perfect for businesses looking to establish their online presence with a professional, fast-loading website.',
+            category: 'web_development',
+            subcategory: 'full_stack',
+            price_starting: 150,
+            delivery_time_days: 7,
+            featured_image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop&q=80',
+            gallery_images: [
+                'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=250&fit=crop&q=80'
+            ],
+            rating: 4.9,
+            total_reviews: 156,
+            total_orders: 234,
+            views_count: 1520,
+            is_featured: true,
+            tags: ['React', 'Laravel', 'Responsive', 'SEO-Ready'],
+            freelancer: {
+                id: 1,
+                name: 'Ahmed Al-Mansouri',
+                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&q=80',
+                is_verified: true,
+                level: 'expert',
+                location: 'Amman'
+            },
+            packages: [
+                { name: 'Basic', price: 150, delivery_days: 7, description: 'Simple landing page' },
+                { name: 'Standard', price: 300, delivery_days: 10, description: 'Multi-page website' },
+                { name: 'Premium', price: 500, delivery_days: 14, description: 'Full e-commerce solution' }
+            ]
+        },
+        {
+            service_id: 2,
+            title: 'Brand Identity & Logo Design',
+            description: 'Transform your business with a stunning brand identity. I create memorable logos, business cards, and complete brand guidelines that make your business stand out.',
+            category: 'graphic_design',
+            subcategory: 'branding',
+            price_starting: 75,
+            delivery_time_days: 3,
+            featured_image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=250&fit=crop&q=80',
+            gallery_images: [
+                'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=250&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=250&fit=crop&q=80'
+            ],
+            rating: 4.8,
+            total_reviews: 89,
+            total_orders: 147,
+            views_count: 890,
+            is_featured: true,
+            tags: ['Logo Design', 'Branding', 'Print Ready', 'Unlimited Revisions'],
+            freelancer: {
+                id: 2,
+                name: 'Layla Qasemi',
+                avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b977?w=150&h=150&fit=crop&crop=face&q=80',
+                is_verified: true,
+                level: 'expert',
+                location: 'Irbid'
+            },
+            packages: [
+                { name: 'Basic', price: 75, delivery_days: 3, description: 'Logo design only' },
+                { name: 'Standard', price: 150, delivery_days: 5, description: 'Logo + business card' },
+                { name: 'Premium', price: 250, delivery_days: 7, description: 'Complete brand package' }
+            ]
+        },
+        {
+            service_id: 3,
+            title: 'Digital Marketing Strategy & Management',
+            description: 'Boost your online presence with comprehensive digital marketing. I provide SEO, social media management, and Google Ads campaigns to grow your business.',
+            category: 'digital_marketing',
+            subcategory: 'social_media',
+            price_starting: 100,
+            delivery_time_days: 5,
+            featured_image: 'https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=400&h=250&fit=crop&q=80',
+            gallery_images: [
+                'https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=400&h=250&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop&q=80'
+            ],
+            rating: 4.6,
+            total_reviews: 123,
+            total_orders: 178,
+            views_count: 1200,
+            is_featured: false,
+            tags: ['SEO', 'Social Media', 'Google Ads', 'Analytics'],
+            freelancer: {
+                id: 3,
+                name: 'Omar Hijazi',
+                avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&q=80',
+                is_verified: false,
+                level: 'intermediate',
+                location: 'Aqaba'
+            },
+            packages: [
+                { name: 'Basic', price: 100, delivery_days: 5, description: 'SEO audit + strategy' },
+                { name: 'Standard', price: 200, delivery_days: 7, description: 'Social media management' },
+                { name: 'Premium', price: 350, delivery_days: 14, description: 'Complete marketing package' }
+            ]
+        },
+        {
+            service_id: 4,
+            title: 'Professional Content Writing & Translation',
+            description: 'High-quality content writing and accurate translation services in Arabic and English. Perfect for websites, blogs, marketing materials, and business documents.',
+            category: 'writing_translation',
+            subcategory: 'content_writing',
+            price_starting: 25,
+            delivery_time_days: 2,
+            featured_image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&h=250&fit=crop&q=80',
+            gallery_images: [
+                'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&h=250&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=250&fit=crop&q=80'
+            ],
+            rating: 4.7,
+            total_reviews: 234,
+            total_orders: 312,
+            views_count: 980,
+            is_featured: false,
+            tags: ['Content Writing', 'Translation', 'SEO Writing', 'Copywriting'],
+            freelancer: {
+                id: 4,
+                name: 'Fatima Khalil',
+                avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face&q=80',
+                is_verified: true,
+                level: 'expert',
+                location: 'Zarqa'
+            },
+            packages: [
+                { name: 'Basic', price: 25, delivery_days: 2, description: '500 words article' },
+                { name: 'Standard', price: 50, delivery_days: 3, description: '1000 words + SEO' },
+                { name: 'Premium', price: 100, delivery_days: 5, description: '2000 words + translation' }
+            ]
+        },
+        {
+            service_id: 5,
+            title: 'Mobile App Development (iOS & Android)',
+            description: 'Custom mobile app development using React Native and Flutter. I create beautiful, functional mobile applications that work perfectly on both iOS and Android.',
+            category: 'mobile_development',
+            subcategory: 'cross_platform',
+            price_starting: 300,
+            delivery_time_days: 14,
+            featured_image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=250&fit=crop&q=80',
+            gallery_images: [
+                'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=250&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80'
+            ],
+            rating: 4.5,
+            total_reviews: 67,
+            total_orders: 89,
+            views_count: 750,
+            is_featured: false,
+            tags: ['React Native', 'Flutter', 'iOS', 'Android'],
+            freelancer: {
+                id: 5,
+                name: 'Khaled Nasser',
+                avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face&q=80',
+                is_verified: false,
+                level: 'intermediate',
+                location: 'Amman'
+            },
+            packages: [
+                { name: 'Basic', price: 300, delivery_days: 14, description: 'Simple app with 3 screens' },
+                { name: 'Standard', price: 600, delivery_days: 21, description: 'Full app with backend' },
+                { name: 'Premium', price: 1000, delivery_days: 30, description: 'Complex app + deployment' }
+            ]
+        },
+        {
+            service_id: 6,
+            title: 'Video Editing & Motion Graphics',
+            description: 'Professional video editing and motion graphics services. Perfect for social media content, promotional videos, explainer videos, and brand storytelling.',
+            category: 'video_animation',
+            subcategory: 'video_editing',
+            price_starting: 80,
+            delivery_time_days: 4,
+            featured_image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400&h=250&fit=crop&q=80',
+            gallery_images: [
+                'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400&h=250&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=400&h=250&fit=crop&q=80'
+            ],
+            rating: 4.8,
+            total_reviews: 94,
+            total_orders: 134,
+            views_count: 1100,
+            is_featured: true,
+            tags: ['Video Editing', 'Motion Graphics', 'After Effects', 'Social Media'],
+            freelancer: {
+                id: 6,
+                name: 'Nour Abdallah',
+                avatar: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face&q=80',
+                is_verified: true,
+                level: 'expert',
+                location: 'Salt'
+            },
+            packages: [
+                { name: 'Basic', price: 80, delivery_days: 4, description: 'Basic video editing' },
+                { name: 'Standard', price: 150, delivery_days: 6, description: 'Video + motion graphics' },
+                { name: 'Premium', price: 250, delivery_days: 8, description: 'Full production package' }
+            ]
+        }
+    ];
+
+    const categories = [
+        { key: 'web_development', name: 'Web Development', icon: BuildingLibraryIcon },
+        { key: 'mobile_development', name: 'Mobile Development', icon: FireIcon },
+        { key: 'graphic_design', name: 'Graphic Design', icon: FireIcon },
+        { key: 'digital_marketing', name: 'Digital Marketing', icon: GlobeAltIcon },
+        { key: 'writing_translation', name: 'Writing & Translation', icon: BuildingLibraryIcon },
+        { key: 'video_animation', name: 'Video & Animation', icon: PlayIcon },
+        { key: 'music_audio', name: 'Music & Audio', icon: FireIcon },
+        { key: 'programming_tech', name: 'Programming & Tech', icon: BuildingLibraryIcon },
+        { key: 'business', name: 'Business', icon: BriefcaseIcon },
+        { key: 'photography', name: 'Photography', icon: FireIcon }
+    ];
+
+    const priceRanges = [
+        { key: 'budget', label: 'Budget (Under 50 JOD)', min: 0, max: 49 },
+        { key: 'standard', label: 'Standard (50-150 JOD)', min: 50, max: 149 },
+        { key: 'premium', label: 'Premium (150-500 JOD)', min: 150, max: 499 },
+        { key: 'enterprise', label: 'Enterprise (500+ JOD)', min: 500, max: 999999 }
+    ];
+
+    const deliveryTimes = [
+        { key: '1-3', label: '1-3 Days' },
+        { key: '4-7', label: '4-7 Days' },
+        { key: '8-14', label: '1-2 Weeks' },
+        { key: '15+', label: '2+ Weeks' }
+    ];
 
     useEffect(() => {
-        fetchCategories();
-        fetchServices();
+        // Simulate API call
+        setTimeout(() => {
+            setServices(mockServices);
+            setLoading(false);
+        }, 1000);
     }, []);
 
-    useEffect(() => {
-        fetchServices();
-    }, [searchQuery, selectedCategory, serviceType, minPrice, maxPrice, maxDeliveryDays, minRating]);
-
-    const fetchCategories = async () => {
-        try {
-            const response = await api.get('/services/categories');
-            setCategories(response.data.data);
-        } catch (error) {
-            console.error('Error fetching categories:', error);
-        }
-    };
-
-    const fetchServices = async (page = 1) => {
-        try {
-            setLoading(true);
-            const params = new URLSearchParams({
-                page,
-                per_page: 12
-            });
-
-            if (searchQuery) params.append('search', searchQuery);
-            if (selectedCategory) params.append('category', selectedCategory);
-            if (serviceType) params.append('service_type', serviceType);
-            if (minPrice) params.append('min_price', minPrice);
-            if (maxPrice) params.append('max_price', maxPrice);
-            if (maxDeliveryDays) params.append('max_delivery_days', maxDeliveryDays);
-            if (minRating) params.append('min_rating', minRating);
-
-            const response = await api.get(`/services?${params}`);
-            setServices(response.data.data);
-            setPagination(response.data.pagination);
-        } catch (error) {
-            console.error('Error fetching services:', error);
-            setServices([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const filteredServices = services.filter(service => {
+        const matchesSearch = service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            service.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            service.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+        const matchesCategory = !selectedCategory || service.category === selectedCategory;
+        const matchesPriceRange = !selectedPriceRange || (() => {
+            const range = priceRanges.find(r => r.key === selectedPriceRange);
+            return range && service.price_starting >= range.min && service.price_starting <= range.max;
+        })();
+        const matchesDeliveryTime = !selectedDeliveryTime || (() => {
+            if (selectedDeliveryTime === '1-3') return service.delivery_time_days <= 3;
+            if (selectedDeliveryTime === '4-7') return service.delivery_time_days >= 4 && service.delivery_time_days <= 7;
+            if (selectedDeliveryTime === '8-14') return service.delivery_time_days >= 8 && service.delivery_time_days <= 14;
+            if (selectedDeliveryTime === '15+') return service.delivery_time_days >= 15;
+            return true;
+        })();
+        const matchesRating = !selectedRating || service.rating >= parseFloat(selectedRating);
+        
+        return matchesSearch && matchesCategory && matchesPriceRange && matchesDeliveryTime && matchesRating;
+    });
 
     const clearFilters = () => {
         setSearchQuery('');
         setSelectedCategory('');
-        setServiceType('');
-        setMinPrice('');
-        setMaxPrice('');
-        setMaxDeliveryDays('');
-        setMinRating('');
+        setSelectedPriceRange('');
+        setSelectedDeliveryTime('');
+        setSelectedRating('');
     };
 
     const renderStars = (rating) => {
@@ -103,369 +317,347 @@ const ServicesPage = () => {
         return stars;
     };
 
-    const ServiceCard = ({ service }) => (
-        <div className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-200">
-            {service.featured_image && (
-                <div className="aspect-w-16 aspect-h-10">
+    const getLevelColor = (level) => {
+        const colors = {
+            beginner: 'text-green-600 bg-green-100',
+            intermediate: 'text-yellow-600 bg-yellow-100',
+            expert: 'text-purple-600 bg-purple-100'
+        };
+        return colors[level] || colors.beginner;
+    };
+
+    const ServiceCard = ({ service }) => {
+        const categoryData = categories.find(cat => cat.key === service.category);
+        const IconComponent = categoryData?.icon || BriefcaseIcon;
+        
+        return (
+            <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="relative">
                     <img 
-                        className="w-full h-48 object-cover rounded-t-lg" 
-                        src={`/storage/${service.featured_image}`}
+                        src={service.featured_image} 
                         alt={service.title}
+                        className="w-full h-48 object-cover"
                     />
-                </div>
-            )}
-            
-            <div className="p-6">
-                <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
-                        {service.title}
-                    </h3>
-                    {service.featured && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 ml-2">
-                            Featured
-                        </span>
-                    )}
-                </div>
-
-                <div className="flex items-center space-x-2 mb-3">
-                    <div className="flex items-center">
-                        {service.freelancer?.profile_image ? (
-                            <img 
-                                className="h-6 w-6 rounded-full object-cover" 
-                                src={`/storage/${service.freelancer.profile_image}`}
-                                alt={service.freelancer.user.first_name}
-                            />
-                        ) : (
-                            <div className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <span className="text-xs font-medium text-indigo-600">
-                                    {service.freelancer?.user.first_name?.[0]}
-                                </span>
+                    
+                    {/* Featured badge */}
+                    {service.is_featured && (
+                        <div className="absolute top-3 left-3">
+                            <div className="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                                <StarSolidIcon className="h-4 w-4 mr-1" />
+                                {language === 'ar' ? 'مميز' : 'Featured'}
                             </div>
-                        )}
-                    </div>
-                    <span className="text-sm text-gray-600">
-                        by {service.freelancer?.user.first_name} {service.freelancer?.user.last_name}
-                    </span>
-                </div>
-
-                <p className="text-sm text-gray-600 line-clamp-3 mb-4">
-                    {service.description}
-                </p>
-
-                <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-                    <div className="flex items-center">
-                        {renderStars(service.rating)}
-                        <span className="ml-1">({service.total_reviews})</span>
-                    </div>
-                    
-                    <div className="flex items-center">
-                        <ClockIcon className="h-4 w-4 mr-1" />
-                        <span>{service.delivery_days} day{service.delivery_days > 1 ? 's' : ''}</span>
-                    </div>
-                </div>
-
-                <div className="flex items-center justify-between mb-4">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {service.category?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                    </span>
-                    
-                    <div className="text-right">
-                        <div className="text-lg font-bold text-gray-900">
-                            {service.display_price || `${service.base_price} JOD`}
                         </div>
-                        {service.price_type !== 'fixed' && (
-                            <div className="text-xs text-gray-500">
-                                {service.price_type === 'hourly' ? 'per hour' : 'starting from'}
-                            </div>
-                        )}
+                    )}
+
+                    {/* Category icon */}
+                    <div className="absolute top-3 right-3">
+                        <div className="bg-white bg-opacity-90 rounded-full p-1.5">
+                            <IconComponent className="h-4 w-4 text-gray-600" />
+                        </div>
+                    </div>
+
+                    {/* Price badge */}
+                    <div className="absolute bottom-3 right-3">
+                        <div className="bg-black bg-opacity-70 text-white px-3 py-1 rounded-md font-medium">
+                            {language === 'ar' ? 'يبدأ من' : 'Starting at'} {service.price_starting} {language === 'ar' ? 'د.أ' : 'JOD'}
+                        </div>
                     </div>
                 </div>
+                
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 flex-1">
+                            {service.title}
+                        </h3>
+                    </div>
+                    
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {service.description}
+                    </p>
 
-                {service.tags && service.tags.length > 0 && (
+                    {/* Freelancer info */}
+                    <div className="flex items-center mb-4">
+                        <img 
+                            src={service.freelancer.avatar} 
+                            alt={service.freelancer.name}
+                            className="h-8 w-8 rounded-full object-cover mr-3"
+                        />
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center">
+                                <p className="text-sm font-medium text-gray-900 truncate mr-2">
+                                    {service.freelancer.name}
+                                </p>
+                                {service.freelancer.is_verified && (
+                                    <CheckBadgeSolidIcon className="h-4 w-4 text-green-500" />
+                                )}
+                            </div>
+                            <div className="flex items-center">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getLevelColor(service.freelancer.level)}`}>
+                                    {language === 'ar' ? 
+                                        (service.freelancer.level === 'beginner' ? 'مبتدئ' :
+                                         service.freelancer.level === 'intermediate' ? 'متوسط' : 'خبير') :
+                                        service.freelancer.level.charAt(0).toUpperCase() + service.freelancer.level.slice(1)
+                                    }
+                                </span>
+                                <span className="text-xs text-gray-500 ml-2">{service.freelancer.location}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                            {renderStars(service.rating)}
+                            <span className="ml-1 text-sm font-medium text-gray-900">
+                                {service.rating}
+                            </span>
+                            <span className="ml-1 text-sm text-gray-500">
+                                ({service.total_reviews})
+                            </span>
+                        </div>
+                        
+                        <div className="flex items-center text-sm text-gray-500">
+                            <ClockIcon className="h-4 w-4 mr-1" />
+                            <span>{service.delivery_time_days} {language === 'ar' ? 
+                                (service.delivery_time_days === 1 ? 'يوم' : 'أيام') : 
+                                (service.delivery_time_days === 1 ? 'day' : 'days')
+                            }</span>
+                        </div>
+                    </div>
+
+                    {/* Tags */}
                     <div className="flex flex-wrap gap-1 mb-4">
                         {service.tags.slice(0, 3).map((tag, index) => (
-                            <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                                <TagIcon className="h-3 w-3 mr-1" />
+                            <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
                                 {tag}
                             </span>
                         ))}
                         {service.tags.length > 3 && (
-                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                                +{service.tags.length - 3} more
+                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                +{service.tags.length - 3} {language === 'ar' ? 'المزيد' : 'more'}
                             </span>
                         )}
                     </div>
-                )}
-
-                <Link 
-                    to={`/services/${service.service_id}`}
-                    className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
-                >
-                    View Details
-                </Link>
-            </div>
-        </div>
-    );
-
-    return (
-        <div className="min-h-screen bg-gray-50" dir={direction}>
-            {/* Header */}
-            <div className="bg-white shadow-sm border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div className="text-center">
-                        <h1 className="text-3xl font-bold text-gray-900">Professional Services</h1>
-                        <p className="mt-2 text-lg text-gray-600">
-                            Find the perfect service for your project needs
-                        </p>
+                    
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center text-sm text-gray-500">
+                            <EyeIcon className="h-4 w-4 mr-1" />
+                            <span>{service.views_count} {language === 'ar' ? 'مشاهدة' : 'views'}</span>
+                            <span className="mx-2">•</span>
+                            <UsersIcon className="h-4 w-4 mr-1" />
+                            <span>{service.total_orders} {language === 'ar' ? 'طلبات' : 'orders'}</span>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-4 flex space-x-2">
+                        <Link 
+                            to={`/service/${service.service_id}`}
+                            className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium text-center"
+                        >
+                            {language === 'ar' ? 'عرض التفاصيل' : 'View Details'}
+                        </Link>
+                        <button className="bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors">
+                            <HeartIcon className="h-4 w-4" />
+                        </button>
                     </div>
                 </div>
             </div>
+        );
+    };
 
-            {/* Search and Filters */}
-            <div className="bg-white shadow-sm border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div className="flex flex-col lg:flex-row gap-4 mb-4">
-                        <div className="flex-1">
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">{language === 'ar' ? 'جاري التحميل...' : 'Loading...'}</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50" dir={direction}>
+            {/* Hero Section */}
+            <div className="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 overflow-hidden">
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+                    <div className="text-center">
+                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                            {language === 'ar' ? 'اكتشف الخدمات الاحترافية' : 'Discover Professional Services'}
+                        </h1>
+                        <p className="text-xl text-white opacity-90 mb-8 max-w-3xl mx-auto">
+                            {language === 'ar' ? 
+                                'استكشف آلاف الخدمات عالية الجودة من مستقلين محترفين جاهزين لتحقيق أهدافك' :
+                                'Explore thousands of high-quality services from professional freelancers ready to bring your vision to life'
+                            }
+                        </p>
+                        <Link
+                            to="/register-freelancer"
+                            className="inline-flex items-center bg-white text-indigo-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
+                        >
+                            <BriefcaseIcon className="h-5 w-5 mr-2" />
+                            {language === 'ar' ? 'ابدأ البيع' : 'Start Selling'}
+                        </Link>
+                    </div>
+                </div>
+                
+                {/* Decorative shapes */}
+                <div className="absolute top-0 left-0 w-40 h-40 bg-white bg-opacity-10 rounded-full -translate-x-20 -translate-y-20"></div>
+                <div className="absolute bottom-0 right-0 w-60 h-60 bg-white bg-opacity-5 rounded-full translate-x-20 translate-y-20"></div>
+            </div>
+
+            {/* Filters & Search */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
+                <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {language === 'ar' ? 'البحث' : 'Search Services'}
+                            </label>
                             <div className="relative">
                                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                                 <input
                                     type="text"
-                                    placeholder="Search services by title, description, or tags..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    placeholder={language === 'ar' ? 'ابحث عن الخدمات...' : 'Search services...'}
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 />
                             </div>
                         </div>
                         
-                        <div className="flex items-center space-x-2">
-                            <button
-                                onClick={() => setViewMode('grid')}
-                                className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400'}`}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {language === 'ar' ? 'الفئة' : 'Category'}
+                            </label>
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                className="w-full py-3 px-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             >
-                                <Squares2X2Icon className="h-5 w-5" />
-                            </button>
-                            <button
-                                onClick={() => setViewMode('list')}
-                                className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400'}`}
+                                <option value="">{language === 'ar' ? 'جميع الفئات' : 'All Categories'}</option>
+                                {categories.map(category => (
+                                    <option key={category.key} value={category.key}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {language === 'ar' ? 'نطاق السعر' : 'Price Range'}
+                            </label>
+                            <select
+                                value={selectedPriceRange}
+                                onChange={(e) => setSelectedPriceRange(e.target.value)}
+                                className="w-full py-3 px-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             >
-                                <ListBulletIcon className="h-5 w-5" />
-                            </button>
-                            <button
-                                onClick={() => setShowFilters(!showFilters)}
-                                className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                <option value="">{language === 'ar' ? 'جميع الأسعار' : 'All Prices'}</option>
+                                {priceRanges.map(range => (
+                                    <option key={range.key} value={range.key}>
+                                        {range.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {language === 'ar' ? 'وقت التسليم' : 'Delivery Time'}
+                            </label>
+                            <select
+                                value={selectedDeliveryTime}
+                                onChange={(e) => setSelectedDeliveryTime(e.target.value)}
+                                className="w-full py-3 px-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             >
-                                <FunnelIcon className="h-4 w-4 mr-2" />
-                                Filters
-                            </button>
+                                <option value="">{language === 'ar' ? 'أي وقت' : 'Any Time'}</option>
+                                {deliveryTimes.map(time => (
+                                    <option key={time.key} value={time.key}>
+                                        {time.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                {language === 'ar' ? 'التقييم الأدنى' : 'Min Rating'}
+                            </label>
+                            <select
+                                value={selectedRating}
+                                onChange={(e) => setSelectedRating(e.target.value)}
+                                className="w-full py-3 px-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            >
+                                <option value="">{language === 'ar' ? 'أي تقييم' : 'Any Rating'}</option>
+                                <option value="4">4+ {language === 'ar' ? 'نجوم' : 'Stars'}</option>
+                                <option value="4.5">4.5+ {language === 'ar' ? 'نجوم' : 'Stars'}</option>
+                                <option value="4.8">4.8+ {language === 'ar' ? 'نجوم' : 'Stars'}</option>
+                            </select>
                         </div>
                     </div>
-
-                    {/* Filters Panel */}
-                    {showFilters && (
-                        <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Category
-                                    </label>
-                                    <select
-                                        value={selectedCategory}
-                                        onChange={(e) => setSelectedCategory(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                    >
-                                        <option value="">All Categories</option>
-                                        {Object.entries(categories).map(([key, value]) => (
-                                            <option key={key} value={key}>
-                                                {value}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Service Type
-                                    </label>
-                                    <select
-                                        value={serviceType}
-                                        onChange={(e) => setServiceType(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                    >
-                                        <option value="">All Types</option>
-                                        <option value="remote">Remote</option>
-                                        <option value="onsite">On-site</option>
-                                        <option value="hybrid">Hybrid</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Price Range (JOD)
-                                    </label>
-                                    <div className="flex space-x-2">
-                                        <input
-                                            type="number"
-                                            placeholder="Min"
-                                            value={minPrice}
-                                            onChange={(e) => setMinPrice(e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                        />
-                                        <input
-                                            type="number"
-                                            placeholder="Max"
-                                            value={maxPrice}
-                                            onChange={(e) => setMaxPrice(e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Delivery Time
-                                    </label>
-                                    <select
-                                        value={maxDeliveryDays}
-                                        onChange={(e) => setMaxDeliveryDays(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                    >
-                                        <option value="">Any Time</option>
-                                        <option value="1">1 Day</option>
-                                        <option value="3">3 Days</option>
-                                        <option value="7">1 Week</option>
-                                        <option value="14">2 Weeks</option>
-                                        <option value="30">1 Month</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-between">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Minimum Rating
-                                    </label>
-                                    <select
-                                        value={minRating}
-                                        onChange={(e) => setMinRating(e.target.value)}
-                                        className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                                    >
-                                        <option value="">Any Rating</option>
-                                        <option value="4">4+ Stars</option>
-                                        <option value="4.5">4.5+ Stars</option>
-                                        <option value="4.8">4.8+ Stars</option>
-                                    </select>
-                                </div>
-
-                                <div className="flex items-end">
-                                    <button
-                                        onClick={clearFilters}
-                                        className="px-4 py-2 text-indigo-600 bg-white border border-indigo-600 rounded-md hover:bg-indigo-50 transition-colors"
-                                    >
-                                        Clear Filters
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <p className="text-gray-600">
-                            {pagination.total ? `${pagination.total} services found` : 'Loading...'}
+                    
+                    <div className="mt-4 flex justify-between items-center">
+                        <p className="text-sm text-gray-600">
+                            {language === 'ar' ? 
+                                `تم العثور على ${filteredServices.length} خدمة` :
+                                `Found ${filteredServices.length} services`
+                            }
                         </p>
+                        <button
+                            onClick={clearFilters}
+                            className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                        >
+                            {language === 'ar' ? 'إعادة تعيين الفلاتر' : 'Reset Filters'}
+                        </button>
                     </div>
                 </div>
 
                 {/* Services Grid */}
-                {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[...Array(6)].map((_, index) => (
-                            <div key={index} className="animate-pulse">
-                                <div className="bg-white rounded-lg shadow-sm border p-6">
-                                    <div className="h-48 bg-gray-200 rounded mb-4"></div>
-                                    <div className="space-y-3">
-                                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                                        <div className="h-3 bg-gray-200 rounded w-full"></div>
-                                        <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                                        <div className="h-8 bg-gray-200 rounded w-full"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : services.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {services.map(service => (
-                            <ServiceCard key={service.service_id} service={service} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-12">
-                        <MagnifyingGlassIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">
-                            No services found
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    {filteredServices.map(service => (
+                        <ServiceCard key={service.service_id} service={service} />
+                    ))}
+                </div>
+
+                {/* Empty State */}
+                {filteredServices.length === 0 && (
+                    <div className="text-center py-16">
+                        <BriefcaseIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                            {language === 'ar' ? 'لا توجد خدمات' : 'No services found'}
                         </h3>
-                        <p className="text-gray-600 mb-4">
-                            Try adjusting your search criteria or filters.
+                        <p className="text-gray-600 mb-6">
+                            {language === 'ar' ? 'جرب تعديل فلاتر البحث للعثور على خدمات' : 'Try adjusting your search filters to find services'}
                         </p>
                         <button
                             onClick={clearFilters}
-                            className="text-indigo-600 hover:text-indigo-500 font-medium"
+                            className="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition-colors"
                         >
-                            Clear all filters
+                            {language === 'ar' ? 'إعادة تعيين الفلاتر' : 'Reset Filters'}
                         </button>
                     </div>
                 )}
 
-                {/* Pagination */}
-                {pagination.last_page > 1 && (
-                    <div className="flex justify-center mt-12">
-                        <nav className="flex items-center space-x-1">
-                            {pagination.current_page > 1 && (
-                                <button
-                                    onClick={() => fetchServices(pagination.current_page - 1)}
-                                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                                >
-                                    Previous
-                                </button>
-                            )}
-                            
-                            {[...Array(Math.min(pagination.last_page, 5))].map((_, index) => {
-                                const page = index + 1;
-                                const isCurrentPage = page === pagination.current_page;
-                                
-                                return (
-                                    <button
-                                        key={page}
-                                        onClick={() => fetchServices(page)}
-                                        className={`px-3 py-2 text-sm font-medium rounded-md ${
-                                            isCurrentPage
-                                                ? 'bg-indigo-600 text-white'
-                                                : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-                                        }`}
-                                    >
-                                        {page}
-                                    </button>
-                                );
-                            })}
-                            
-                            {pagination.current_page < pagination.last_page && (
-                                <button
-                                    onClick={() => fetchServices(pagination.current_page + 1)}
-                                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                                >
-                                    Next
-                                </button>
-                            )}
-                        </nav>
-                    </div>
-                )}
+                {/* Call to Action */}
+                <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-center text-white mb-12">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                        {language === 'ar' ? 'لديك مهارة أو خدمة تقدمها؟' : 'Have a skill or service to offer?'}
+                    </h2>
+                    <p className="text-lg opacity-90 mb-6">
+                        {language === 'ar' ? 
+                            'ابدأ ببيع خدماتك الآن وابني مصدر دخل مستدام من مهاراتك' :
+                            'Start selling your services today and build a sustainable income from your skills'
+                        }
+                    </p>
+                    <Link
+                        to="/register-freelancer"
+                        className="inline-flex items-center bg-white text-indigo-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
+                    >
+                        <BriefcaseIcon className="h-5 w-5 mr-2" />
+                        {language === 'ar' ? 'ابدأ البيع الآن' : 'Start Selling Now'}
+                    </Link>
+                </div>
             </div>
         </div>
     );
