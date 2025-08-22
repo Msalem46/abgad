@@ -14,6 +14,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 
 const NewHomePage = () => {
     const { t, direction, language } = useLanguage();
+    const [loading, setLoading] = useState(true);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [counters, setCounters] = useState({
         stores: 0,
@@ -41,13 +42,23 @@ const NewHomePage = () => {
         }
     ];
 
+    // Simulate initial loading
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 1500);
+        return () => clearTimeout(timer);
+    }, []);
+
     // Auto-slide hero
     useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [heroSlides.length]);
+        if (!loading) {
+            const interval = setInterval(() => {
+                setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+            }, 5000);
+            return () => clearInterval(interval);
+        }
+    }, [heroSlides.length, loading]);
 
     // Animated counters
     useEffect(() => {
@@ -72,9 +83,11 @@ const NewHomePage = () => {
             });
         };
 
-        const timer = setTimeout(animateCounters, 1000);
-        return () => clearTimeout(timer);
-    }, []);
+        if (!loading) {
+            const timer = setTimeout(animateCounters, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [loading]);
 
     const featuredStores = [
         {
@@ -188,6 +201,18 @@ const NewHomePage = () => {
         }
         return stars;
     };
+
+    // Loading state
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">{language === 'ar' ? 'جاري تحميل الصفحة الرئيسية...' : 'Loading homepage...'}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50" dir={direction}>

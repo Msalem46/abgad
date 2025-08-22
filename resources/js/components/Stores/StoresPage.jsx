@@ -243,17 +243,21 @@ const StoresPage = () => {
     ];
 
     useEffect(() => {
-        // In a real app, fetch stores from API
-        setStores(featuredStores);
-        setLoading(false);
+        // Simulate API call with loading delay
+        const timer = setTimeout(() => {
+            setStores(featuredStores);
+            setLoading(false);
+            
+            // Simulate pagination
+            setPagination({
+                current_page: 1,
+                per_page: 12,
+                total: featuredStores.length,
+                last_page: Math.ceil(featuredStores.length / 12)
+            });
+        }, 1200);
         
-        // Simulate pagination
-        setPagination({
-            current_page: 1,
-            per_page: 12,
-            total: featuredStores.length,
-            last_page: Math.ceil(featuredStores.length / 12)
-        });
+        return () => clearTimeout(timer);
     }, []);
 
     // Filter and search logic
