@@ -10,7 +10,7 @@ import {
 import { useState } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageSwitcher from '../UI/LanguageSwitcher';
-import MobileBottomNav from '../Common/MobileBottomNav';
+// import MobileBottomNav from '../Common/MobileBottomNav';
 
 const PublicLayout = ({ children }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -196,12 +196,12 @@ const PublicLayout = ({ children }) => {
             </nav>
 
             {/* Main Content */}
-            <main className="flex-1 pb-16 md:pb-0">
+            <main className="flex-1">
                 {children}
             </main>
 
-            {/* Mobile Bottom Navigation */}
-            <MobileBottomNav />
+            {/* Mobile Bottom Navigation - Commented out until MobileBottomNav component is uploaded */}
+            {/* <MobileBottomNav /> */}
 
             {/* Footer */}
             <footer className="bg-gray-900 text-white">

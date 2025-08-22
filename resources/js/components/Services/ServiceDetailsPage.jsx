@@ -276,7 +276,14 @@ const ServiceDetailsPage = () => {
     };
 
     if (loading) {
-        return <PageLoader message={language === 'ar' ? 'جاري تحميل تفاصيل الخدمة...' : 'Loading service details...'} />;
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">{language === 'ar' ? 'جاري تحميل تفاصيل الخدمة...' : 'Loading service details...'}</p>
+                </div>
+            </div>
+        );
     }
 
     if (!service) {
