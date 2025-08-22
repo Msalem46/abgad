@@ -59,7 +59,7 @@ const PublicLayout = ({ children }) => {
         },
         {
             path: '/tourism',
-            label: language === 'ar' ? 'السياحة' : 'Tourism',
+            label: language === 'ar' ? 'سوّاح' : 'Sawwah',
             icon: MapPinIcon,
             solidIcon: MapPinSolidIcon,
             activeColor: 'text-indigo-600'
