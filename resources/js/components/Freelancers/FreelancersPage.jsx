@@ -20,6 +20,7 @@ import {
 import { StarIcon as StarSolidIcon, HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
+import PageLoader from '../Common/PageLoader';
 
 const FreelancersPage = () => {
     const { t, direction, language } = useLanguage();
@@ -374,14 +375,7 @@ const FreelancersPage = () => {
     };
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">{language === 'ar' ? 'جاري التحميل...' : 'Loading...'}</p>
-                </div>
-            </div>
-        );
+        return <PageLoader message={language === 'ar' ? 'جاري تحميل المستقلين...' : 'Loading freelancers...'} />;
     }
 
     return (

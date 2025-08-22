@@ -25,6 +25,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
+import PageLoader from '../Common/PageLoader';
 
 const StoresPage = () => {
     const { t, direction, language } = useLanguage();
@@ -472,6 +473,10 @@ const StoresPage = () => {
             </div>
         </div>
     );
+
+    if (loading) {
+        return <PageLoader message={language === 'ar' ? 'جاري تحميل المتاجر...' : 'Loading stores...'} />;
+    }
 
     return (
         <div className="min-h-screen bg-gray-50" dir={direction}>
